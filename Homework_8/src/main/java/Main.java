@@ -4,12 +4,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.List;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Aliaksandr\\Desktop\\AAT\\!Chromedriver\\chromedriver.exe");
         WebDriver driver = new ChromeDriver();
-//        driver.manage().window().maximize();
+        driver.manage().window().maximize();
         driver.get("http://www.booking.com");
         //Ввести Moscow в строке поиска
         WebElement search = driver.findElement(By.xpath("//input[@id='ss']"));
@@ -20,6 +21,7 @@ public class Main {
         Thread.sleep(2000);
         WebElement submit = driver.findElement(By.xpath("(//button[@type=\"submit\"])[1]"));
         submit.click();
+        Thread.sleep(2000);
 
         //ВВодим даты пребывания
 //        Thread.sleep(2000);
@@ -40,17 +42,29 @@ public class Main {
         System.out.println("Количество гостиниц, которые нельзя забронировать на эти даты: " + ne.size());
 
         //Фильтрация гостиниц по рейтингу
-        WebElement starRating = driver.findElement(By.xpath("//a[contains(text(), \"Количество звезд и цена\")]"));
+        WebElement starRating = driver.findElement(By.xpath("(//div[@class=\"bui-checkbox__label filter_item css-checkbox\"])[5]"));
         starRating.click();
+        Thread.sleep(2000);
 
-        WebElement sortBystars = driver.findElement(By.xpath("//a[contains(text(), \"количество звезд [5→1]\")]"));
+        WebElement sortBystars = driver.findElement(By.xpath("(//a[@class=\"hotel_name_link url\"])[1]"));
         sortBystars.click();
+        Thread.sleep(3000);
+
+        //Переход на новую вкладку
+//        Set<String> windowHandles = driver.getWindowHandles();
+//        for (String widow : windowHandles) {
+//            driver.switchTo().window(String.valueOf(windowHandles));
+//        }
+//
+        String handle = driver.getWindowHandle();
+        driver.switchTo().window(handle);
 
         //Проверка на рейтинг
-        WebElement ratingCheck = driver.findElement(By.xpath("(//div[text()=10])[3]"));
-        int realReview = Integer.parseInt(ratingCheck.getText());
-        if (realReview >= 9) {
-            System.out.println("Рейтинг отеля " + realReview);
+        WebElement ratingCheck = driver.findElement(By.xpath("(//div[@class=\"bui-review-score__badge\"])[1]"));
+        double realReview = Double.parseDouble(ratingCheck.getText());
+        if (realReview >= 9.0) {
+            System.out.println("Hotel rate " + realReview);
+            driver.quit();
         }
     }
 }
