@@ -3,11 +3,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ParseException {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Aliaksandr\\Desktop\\AAT\\!Chromedriver\\chromedriver.exe");
         WebDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
@@ -46,25 +49,19 @@ public class Main {
         starRating.click();
         Thread.sleep(2000);
 
-        WebElement sortBystars = driver.findElement(By.xpath("(//a[@class=\"hotel_name_link url\"])[1]"));
-        sortBystars.click();
+        WebElement sortByStars = driver.findElement(By.xpath("(//a[@class=\"hotel_name_link url\"])[1]"));
+        sortByStars.click();
         Thread.sleep(3000);
-
-        //Переход на новую вкладку
-//        Set<String> windowHandles = driver.getWindowHandles();
-//        for (String widow : windowHandles) {
-//            driver.switchTo().window(String.valueOf(windowHandles));
-//        }
-//
-        String handle = driver.getWindowHandle();
-        driver.switchTo().window(handle);
 
         //Проверка на рейтинг
         WebElement ratingCheck = driver.findElement(By.xpath("(//div[@class=\"bui-review-score__badge\"])[1]"));
-        double realReview = Double.parseDouble(ratingCheck.getText());
+        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        Number number = numberFormat.parse(ratingCheck.getText());
+        double realReview = number.doubleValue();
         if (realReview >= 9.0) {
-            System.out.println("Hotel rate " + realReview);
+            System.out.println("Hotel rate " + ratingCheck.getText());
             driver.quit();
         }
     }
 }
+
